@@ -46,6 +46,26 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onStart() {
+        super.onStart()
+        // TODO:
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // TODO:
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // TODO:
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // TODO:
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()

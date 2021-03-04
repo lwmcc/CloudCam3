@@ -22,4 +22,8 @@
     <style name="Theme.CloudCam3.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.CloudCam3.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.UIPlayground.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.UIPlayground.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

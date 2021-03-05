@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import com.mccarty.cloudcam3.R
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -38,7 +39,7 @@ class HomeFragment : Fragment() {
         })
 
         mediaViewButton.setOnClickListener {
-            Navigation.createNavigateOnClickListener(R.id.frag_camera_view, null)
+            NavHostFragment.findNavController(this).navigate(R.id.cameraViewFragment)
         }
 
         return root

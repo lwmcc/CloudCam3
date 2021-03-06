@@ -29,7 +29,6 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var fab: FloatingActionButton
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private val model: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -16,27 +16,20 @@ import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
+    //private lateinit var homeViewModel: HomeViewModel
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-                ViewModelProvider(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         val textView: TextView = root.findViewById(R.id.text_home)
         val mediaViewButton: Button = root.findViewById(R.id.button_for_test)
 
-        // TODO: use this instead
-        //button_for_test.setOnClickListener {
-        //    Navigation.createNavigateOnClickListener(R.id.frag_camera_view, null)
-        //}
-
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
+       /* homeViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
-        })
+        })*/
 
         mediaViewButton.setOnClickListener {
             NavHostFragment.findNavController(this).navigate(R.id.cameraViewFragment)

@@ -1,15 +1,15 @@
 package com.mccarty.cloudcam3.ui.cameraview
 
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
@@ -20,12 +20,16 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.common.util.concurrent.ListenableFuture
+import com.mccarty.cloudcam3.MainActivity
 import com.mccarty.cloudcam3.MainActivityViewModel
 import com.mccarty.cloudcam3.R
 import kotlinx.android.synthetic.main.fragment_camera_view.*
 import java.io.File
 import java.util.concurrent.ExecutorService
 import kotlinx.android.synthetic.main.activity_main.*
+import java.nio.ByteBuffer
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.Executors
 
 class CameraViewFragment: Fragment() {
@@ -35,6 +39,7 @@ class CameraViewFragment: Fragment() {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
     private lateinit var finder: PreviewView
+    private val TAG = CameraViewFragment::class.simpleName
 
     private var camera: Camera? = null
 
@@ -42,14 +47,7 @@ class CameraViewFragment: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-        cameraProviderFuture.addListener(Runnable {
-            val cameraProvider = cameraProviderFuture.get()
-            bindPreview(cameraProvider)
-        }, ContextCompat.getMainExecutor(requireContext()))
-
-        println("ON CREATE *****")
     }
 
     override fun onCreateView(
@@ -61,9 +59,10 @@ class CameraViewFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         finder = viewFinder
+        outputDirectory = requireActivity().filesDir
 
         camera_capture_button.setOnClickListener {
-                println("CLICK TAKE IMAGE")
+            takePhoto()
         }
 
         switch_capture_mode.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -73,6 +72,8 @@ class CameraViewFragment: Fragment() {
         video_capture_button.setOnClickListener {
 
         }
+
+        startCamera()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -82,59 +83,106 @@ class CameraViewFragment: Fragment() {
 
     override fun onResume() {
         super.onResume()
-        println("ON RESUME *****")
-        startCamera()
-    }
 
-
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-
-        println("REQUEST $requestCode *****")
-
-    }
-
-    fun bindPreview(cameraProvider : ProcessCameraProvider) {
-        var preview : Preview = Preview.Builder().build()
-
-        var cameraSelector : CameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
-
-        preview.setSurfaceProvider(finder.createSurfaceProvider())
-
-        var camera = cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, preview)
     }
 
     private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+            val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-        cameraProviderFuture.addListener(Runnable {
-            // Used to bind the lifecycle of cameras to the lifecycle owner
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            cameraProviderFuture.addListener(Runnable {
+                // Used to bind the lifecycle of cameras to the lifecycle owner
+                val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            // Preview
-            val preview = Preview.Builder()
-                    .build()
-                    .also {
-                        it.setSurfaceProvider(viewFinder.createSurfaceProvider())
-                    }
+                // Preview
+                val preview = Preview.Builder()
+                        .build()
+                        .also {
+                            it.setSurfaceProvider(viewFinder.createSurfaceProvider())
+                        }
 
-            // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                imageCapture = ImageCapture.Builder().build()
 
-            try {
-                // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
+                /*val imageAnalyzer = ImageAnalysis.Builder()
+                        .build()
+                        .also {
+                            it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
+                                Log.d(TAG, "Average luminosity: $luma")
+                            })
+                        }*/
 
-                // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
-                        this, cameraSelector, preview)
+                // Select back camera as a default
+                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
-            } catch(exc: Exception) {
-               println("ERROR $exc *****")
+                try {
+                    // Unbind use cases before rebinding
+                    cameraProvider.unbindAll()
+
+                    // Bind use cases to camera
+                    //cameraProvider.bindToLifecycle(requireActivity(), cameraSelector, preview)
+                    camera = cameraProvider.bindToLifecycle(requireActivity(), cameraSelector, preview, imageCapture)
+
+                    //cameraProvider.bindToLifecycle(
+                    //        this, cameraSelector, preview, imageCapture, imageAnalyzer)
+
+                } catch(exc: Exception) {
+                    Log.e(TAG, "Use case binding failed", exc)
+                }
+
+            }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun takePhoto() {
+
+        // Get a stable reference of the modifiable image capture use case
+        val imageCapture = imageCapture ?: return
+
+        Log.d(TAG, "TAKE PHOTO")
+
+        // Create time-stamped output file to hold the image
+        val photoFile = File(
+                outputDirectory,
+                SimpleDateFormat("yyyy-MM-dd", Locale.US
+                ).format(System.currentTimeMillis()) + ".jpg")
+
+        // Create output options object which contains file + metadata
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+
+        // Set up image capture listener, which is triggered after photo has
+        // been taken
+        imageCapture.takePicture(
+                outputOptions, ContextCompat.getMainExecutor(requireContext()), object : ImageCapture.OnImageSavedCallback {
+            override fun onError(exc: ImageCaptureException) {
+                Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
             }
 
-        }, ContextCompat.getMainExecutor(requireContext()))
+            override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                val savedUri = Uri.fromFile(photoFile)
+                val msg = "Photo capture succeeded: $savedUri"
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                Log.d(TAG, msg)
+            }
+        })
     }
+
+   /* private class LuminosityAnalyzer(private val listener: LumaListener) : ImageAnalysis.Analyzer {
+
+        private fun ByteBuffer.toByteArray(): ByteArray {
+            rewind()    // Rewind the buffer to zero
+            val data = ByteArray(remaining())
+            get(data)   // Copy the buffer into a byte array
+            return data // Return the byte array
+        }
+
+        override fun analyze(image: ImageProxy) {
+
+            val buffer = image.planes[0].buffer
+            val data = buffer.toByteArray()
+            val pixels = data.map { it.toInt() and 0xFF }
+            val luma = pixels.average()
+
+            listener(luma)
+
+            image.close()
+        }
+    }*/
 }

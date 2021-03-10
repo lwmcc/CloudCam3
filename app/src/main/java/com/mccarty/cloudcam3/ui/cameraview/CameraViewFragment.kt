@@ -37,6 +37,7 @@ import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
+import androidx.lifecycle.Observer
 
 typealias LumaListener = (luma: Double) -> Unit
 
@@ -44,6 +45,7 @@ class CameraViewFragment: Fragment() {
 
     private val TAG = CameraViewFragment::class.simpleName
     private val model: MainActivityViewModel by activityViewModels()
+    private val cameraModel: CameraViewViewModel by viewModels()
 
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
@@ -56,10 +58,11 @@ class CameraViewFragment: Fragment() {
     private var imageCapture: ImageCapture? = null
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var preview: Preview? = null
+    private var cameraMode = CameraModes.PHOTO.toString()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        cameraModel.cameraMode(CameraModes.PHOTO.toString())
     }
 
     override fun onCreateView(
@@ -76,13 +79,20 @@ class CameraViewFragment: Fragment() {
         setupUI()
         startCamera()
 
-        // Initialize our background executor
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        cameraModel.showCameraButton.observe(requireActivity(), Observer<String> {
+
+            // TODO:
+            Log.d(TAG, "MY MODE $it")
+            setCaptureModeButtonImage(it)
+        })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         model.showButton(false)
+
     }
 
     override fun onResume() {
@@ -96,7 +106,10 @@ class CameraViewFragment: Fragment() {
         }
 
         capture_mode_button.setOnClickListener {
-
+            when(cameraModel.showCameraButton.value) {
+                CameraModes.PHOTO.toString() -> cameraModel.cameraMode(CameraModes.VIDEO.toString())
+                CameraModes.VIDEO.toString() -> cameraModel.cameraMode(CameraModes.PHOTO.toString())
+            }
         }
 
         video_capture_button.setOnClickListener {
@@ -104,8 +117,6 @@ class CameraViewFragment: Fragment() {
         }
 
         switch_cameras_button.setOnClickListener {
-
-            Log.d(TAG, "LENS $lensFacing")
 
             it.setOnClickListener {
                 lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
@@ -188,7 +199,7 @@ class CameraViewFragment: Fragment() {
                         // Values returned from our analyzer are passed to the attached listener
                         // We log image analysis results here - you should do something useful
                         // instead!
-                        Log.d(TAG, "Average luminosity: $luma")
+                       // Log.d(TAG, "Average luminosity: $luma")
                     })
                 }
 
@@ -211,13 +222,14 @@ class CameraViewFragment: Fragment() {
         var framesPerSecond: Double = -1.0
             private set
 
+        // TODO:
         fun onFrameAnalyzed(listener: LumaListener) = listeners.add(listener)
 
         private fun ByteBuffer.toByteArray(): ByteArray {
-            rewind()    // Rewind the buffer to zero
+            rewind()
             val data = ByteArray(remaining())
-            get(data)   // Copy the buffer into a byte array
-            return data // Return the byte array
+            get(data)
+            return data
         }
 
         override fun analyze(image: ImageProxy) {
@@ -259,6 +271,13 @@ class CameraViewFragment: Fragment() {
             return AspectRatio.RATIO_4_3
         }
         return AspectRatio.RATIO_16_9
+    }
+
+    private fun setCaptureModeButtonImage(mode: String) {
+        when(mode) {
+            CameraModes.VIDEO.toString() -> capture_mode_button.setImageResource(R.drawable.ic_baseline_videocam_24)
+            CameraModes.PHOTO.toString() -> capture_mode_button.setImageResource(R.drawable.ic_baseline_camera_24)
+        }
     }
 
     companion object {

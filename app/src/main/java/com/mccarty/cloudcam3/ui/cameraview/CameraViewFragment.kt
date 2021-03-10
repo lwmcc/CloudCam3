@@ -108,13 +108,12 @@ class CameraViewFragment: Fragment() {
             Log.d(TAG, "LENS $lensFacing")
 
             it.setOnClickListener {
-               /* lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
+                lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
                     CameraSelector.LENS_FACING_BACK
                 } else {
                     CameraSelector.LENS_FACING_FRONT
-                }*/
-                // Re-bind use cases to update selected camera
-                //bindCameraUseCases()
+                }
+                bindCameraUseCases()
             }
         }
     }
@@ -134,11 +133,9 @@ class CameraViewFragment: Fragment() {
 
         val imageCapture = imageCapture ?: return
 
-        Log.d(TAG, "TAKE PHOTO")
-
         val photoFile = File(
                 outputDirectory,
-                SimpleDateFormat("yyyy-MM-dd", Locale.US
+                SimpleDateFormat(FILENAME, Locale.US
                 ).format(System.currentTimeMillis()) + ".jpg")
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
@@ -265,6 +262,7 @@ class CameraViewFragment: Fragment() {
     }
 
     companion object {
+        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
     }

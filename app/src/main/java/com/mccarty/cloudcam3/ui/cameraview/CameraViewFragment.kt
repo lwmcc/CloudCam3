@@ -63,7 +63,7 @@ class CameraViewFragment: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cameraModel.cameraMode(CameraModes.PHOTO.toString())
+        cameraModel.cameraMode(CameraModes.PHOTO.mode)
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
             model.showButton(true)
@@ -114,8 +114,8 @@ class CameraViewFragment: Fragment() {
 
         capture_mode_button.setOnClickListener {
             when(cameraModel.showCameraButton.value) {
-                CameraModes.PHOTO.toString() -> cameraModel.cameraMode(CameraModes.VIDEO.mode)
-                CameraModes.VIDEO.toString() -> cameraModel.cameraMode(CameraModes.PHOTO.mode)
+                CameraModes.PHOTO.mode -> cameraModel.cameraMode(CameraModes.VIDEO.mode)
+                CameraModes.VIDEO.mode -> cameraModel.cameraMode(CameraModes.PHOTO.mode)
             }
         }
 
@@ -124,7 +124,6 @@ class CameraViewFragment: Fragment() {
         }
 
         switch_cameras_button.setOnClickListener {
-
             it.setOnClickListener {
                 lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
                     CameraSelector.LENS_FACING_BACK
@@ -177,13 +176,9 @@ class CameraViewFragment: Fragment() {
 
     private fun bindCameraUseCases() {
         val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
-
         val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
-
         val rotation = viewFinder.display.rotation
-
         val cameraProvider = cameraProvider ?: throw IllegalStateException("Camera initialization failed.")
-
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
         preview = Preview.Builder()
@@ -258,11 +253,8 @@ class CameraViewFragment: Fragment() {
             lastAnalyzedTimestamp = frameTimestamps.first
 
             val buffer = image.planes[0].buffer
-
             val data = buffer.toByteArray()
-
             val pixels = data.map { it.toInt() and 0xFF }
-
             val luma = pixels.average()
 
             listeners.forEach { it(luma) }
@@ -281,6 +273,9 @@ class CameraViewFragment: Fragment() {
     }
 
     private fun setCaptureModeButtonImage(mode: String) {
+
+        Log.d(TAG, "SET BUTTON $mode")
+
         when(mode) {
             CameraModes.VIDEO.mode -> capture_mode_button.setImageResource(R.drawable.ic_baseline_videocam_24)
             CameraModes.PHOTO.mode -> capture_mode_button.setImageResource(R.drawable.ic_baseline_camera_24)

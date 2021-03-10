@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.camera.core.*
@@ -63,6 +64,12 @@ class CameraViewFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cameraModel.cameraMode(CameraModes.PHOTO.toString())
+
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
+            model.showButton(true)
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback);
     }
 
     override fun onCreateView(

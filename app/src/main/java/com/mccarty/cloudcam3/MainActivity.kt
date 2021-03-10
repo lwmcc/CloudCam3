@@ -3,6 +3,7 @@ package com.mccarty.cloudcam3
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.Button
@@ -34,6 +35,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    private val TAG = MainActivity::class.java.canonicalName
     private lateinit var fab: FloatingActionButton
     private lateinit var navController: NavController
     private val model: MainActivityViewModel by viewModels()

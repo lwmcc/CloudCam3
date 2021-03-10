@@ -107,8 +107,8 @@ class CameraViewFragment: Fragment() {
 
         capture_mode_button.setOnClickListener {
             when(cameraModel.showCameraButton.value) {
-                CameraModes.PHOTO.toString() -> cameraModel.cameraMode(CameraModes.VIDEO.toString())
-                CameraModes.VIDEO.toString() -> cameraModel.cameraMode(CameraModes.PHOTO.toString())
+                CameraModes.PHOTO.toString() -> cameraModel.cameraMode(CameraModes.VIDEO.mode)
+                CameraModes.VIDEO.toString() -> cameraModel.cameraMode(CameraModes.PHOTO.mode)
             }
         }
 
@@ -275,8 +275,8 @@ class CameraViewFragment: Fragment() {
 
     private fun setCaptureModeButtonImage(mode: String) {
         when(mode) {
-            CameraModes.VIDEO.toString() -> capture_mode_button.setImageResource(R.drawable.ic_baseline_videocam_24)
-            CameraModes.PHOTO.toString() -> capture_mode_button.setImageResource(R.drawable.ic_baseline_camera_24)
+            CameraModes.VIDEO.mode -> capture_mode_button.setImageResource(R.drawable.ic_baseline_videocam_24)
+            CameraModes.PHOTO.mode -> capture_mode_button.setImageResource(R.drawable.ic_baseline_camera_24)
         }
     }
 

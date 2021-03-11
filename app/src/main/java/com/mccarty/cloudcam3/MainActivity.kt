@@ -19,6 +19,8 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.room.Room
+import com.mccarty.cloudcam3.db.AppDatabase
 
 class MainActivity : AppCompatActivity() {
 
@@ -44,6 +46,8 @@ class MainActivity : AppCompatActivity() {
         model.showCameraButton.observe(this, Observer<Boolean> {
             showHideFabButton(it)
         })
+
+        Room.databaseBuilder(applicationContext, AppDatabase::class.java, "CloudCam3db").build()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

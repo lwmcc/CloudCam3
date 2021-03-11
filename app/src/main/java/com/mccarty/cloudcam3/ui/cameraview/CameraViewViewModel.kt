@@ -7,8 +7,20 @@ import androidx.lifecycle.ViewModel
 class CameraViewViewModel: ViewModel() {
 
     val showCameraButton = MutableLiveData<String>()
+    val showPictureCaptureButton = MutableLiveData<Boolean>()
 
     fun cameraMode(mode: String) {
         showCameraButton.value = mode
+    }
+
+    fun showPicButton(show: Boolean) {
+        when(show) {
+            true -> showPictureCaptureButton.value = true
+            false -> showPictureCaptureButton.value = false
+        }
+    }
+
+    fun saveImageLocationToDb() {
+
     }
 }

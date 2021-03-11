@@ -59,7 +59,6 @@ class CameraViewFragment: Fragment() {
     private var imageCapture: ImageCapture? = null
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var preview: Preview? = null
-    private var cameraMode = CameraModes.PHOTO.toString()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,10 +88,11 @@ class CameraViewFragment: Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         cameraModel.showCameraButton.observe(requireActivity(), Observer<String> {
-
-            // TODO:
-            Log.d(TAG, "MY MODE $it")
             setCaptureModeButtonImage(it)
+        })
+
+        cameraModel.showPictureCaptureButton.observe(requireActivity(), Observer {
+            setCaptureButtonImage(it)
         })
     }
 
@@ -112,26 +112,30 @@ class CameraViewFragment: Fragment() {
             takePhoto()
         }
 
-        capture_mode_button.setOnClickListener {
-            when(cameraModel.showCameraButton.value) {
-                CameraModes.PHOTO.mode -> cameraModel.cameraMode(CameraModes.VIDEO.mode)
-                CameraModes.VIDEO.mode -> cameraModel.cameraMode(CameraModes.PHOTO.mode)
-            }
+        video_capture_button.setOnClickListener {
+            takeVideo()
         }
 
-        video_capture_button.setOnClickListener {
-
+        capture_mode_button.setOnClickListener {
+            when(cameraModel.showCameraButton.value) {
+                CameraModes.PHOTO.mode -> {
+                    cameraModel.cameraMode(CameraModes.VIDEO.mode)
+                    cameraModel.showPicButton(false)
+                }
+                CameraModes.VIDEO.mode -> {
+                    cameraModel.cameraMode(CameraModes.PHOTO.mode)
+                    cameraModel.showPicButton(true)
+                }
+            }
         }
 
         switch_cameras_button.setOnClickListener {
-            it.setOnClickListener {
-                lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
-                    CameraSelector.LENS_FACING_BACK
-                } else {
-                    CameraSelector.LENS_FACING_FRONT
-                }
-                bindCameraUseCases()
+            lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
+                CameraSelector.LENS_FACING_BACK
+            } else {
+                CameraSelector.LENS_FACING_FRONT
             }
+            bindCameraUseCases()
         }
     }
 
@@ -169,10 +173,17 @@ class CameraViewFragment: Fragment() {
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.d(TAG, msg)
 
+                cameraModel.saveImageLocationToDb()
                 // TODO: add path to db
             }
         })
     }
+
+    private fun takeVideo() {
+        // TODO: coming soon
+        Toast.makeText(requireContext(), "Coming Soon", Toast.LENGTH_LONG).show()
+    }
+
 
     private fun bindCameraUseCases() {
         val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
@@ -273,12 +284,22 @@ class CameraViewFragment: Fragment() {
     }
 
     private fun setCaptureModeButtonImage(mode: String) {
-
-        Log.d(TAG, "SET BUTTON $mode")
-
         when(mode) {
             CameraModes.VIDEO.mode -> capture_mode_button.setImageResource(R.drawable.ic_baseline_videocam_24)
             CameraModes.PHOTO.mode -> capture_mode_button.setImageResource(R.drawable.ic_baseline_camera_24)
+        }
+    }
+
+    private fun setCaptureButtonImage(picMode: Boolean) {
+        when(picMode) {
+            true -> {
+                camera_capture_button.visibility = View.VISIBLE
+                video_capture_button.visibility = View.INVISIBLE
+            }
+            false -> {
+                camera_capture_button.visibility = View.INVISIBLE
+                video_capture_button.visibility = View.VISIBLE
+            }
         }
     }
 

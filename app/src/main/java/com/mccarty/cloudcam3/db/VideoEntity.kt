@@ -14,4 +14,4 @@ data class VideoEntity(
     @ColumnInfo(name = "longitude")val longitude: Long = 0L,
     @ColumnInfo(name = "time")val time: Long = 0L,
     @ColumnInfo(name = "private_image")val privateVideo: Boolean = true,
-    @PrimaryKey val uid: Int)
+    @PrimaryKey(autoGenerate = true) val uid: Int = 0)

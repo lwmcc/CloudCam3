@@ -10,6 +10,9 @@ interface ImageDao {
     @Query("SELECT * FROM image")
     fun getAll(): List<ImageEntity>
 
-    //@Insert
-    //fun insertAll(vararg images: ImageEntity)
+    @Insert
+    fun insertAll(vararg images: ImageEntity)
+
+    @Insert
+    fun insertImageEntity(image: ImageEntity)
 }

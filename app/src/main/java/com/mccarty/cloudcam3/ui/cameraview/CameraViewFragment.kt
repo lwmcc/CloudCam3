@@ -38,7 +38,11 @@ import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Observemport androidx.room.Room
+import com.mccarty.cloudcam3.db.AppDatabase
+import com.mccarty.cloudcam3.db.ImageEntity
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 typealias LumaListener = (luma: Double) -> Unit
 
@@ -173,7 +177,8 @@ class CameraViewFragment: Fragment() {
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.d(TAG, msg)
 
-                cameraModel.saveImageLocationToDb()
+                //cameraModel.saveImageLocationToDb()
+                insertImageData(savedUri)
                 // TODO: add path to db
             }
         })
@@ -307,5 +312,21 @@ class CameraViewFragment: Fragment() {
         private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
+    }
+
+    fun insertImageData(image: Uri) {
+
+        val entity = ImageEntity(userName = "larry", fileName = image.toString(), localFilePath = "fake",
+        fileExtension = "myext", latitude = 52262255, longitude = 855588445, time = 255255225, privateImage = false)
+
+        // TODO: move this
+        GlobalScope.launch {
+            try {
+                val db = Room.databaseBuilder(requireContext(), AppDatabase::class.java, "CloudCam3db").build()
+                db.imageDao().insertImageEntity(entity)
+            } catch(ex: Exception) {
+                Log.e(TAG, "MY ERROR $ex")
+            }
+        }
     }
 }

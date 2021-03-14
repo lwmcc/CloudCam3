@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 
 class CameraViewViewModel @ViewModelInject constructor(private val appDatabase: AppDatabase): ViewModel() {
 
-    private val TAG = CameraViewViewModel::class.java.simpleName
     val showCameraButton = MutableLiveData<String>()
     val showPictureCaptureButton = MutableLiveData<Boolean>()
 

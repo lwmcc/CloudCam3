@@ -21,12 +21,15 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.room.Room
 import com.mccarty.cloudcam3.db.AppDatabase
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val TAG = MainActivity::class.java.canonicalName
     private lateinit var fab: FloatingActionButton
     private lateinit var navController: NavController
+    private lateinit var db: AppDatabase
     private val model: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +49,6 @@ class MainActivity : AppCompatActivity() {
         model.showCameraButton.observe(this, Observer<Boolean> {
             showHideFabButton(it)
         })
-
-        Room.databaseBuilder(applicationContext, AppDatabase::class.java, "CloudCam3db").build()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

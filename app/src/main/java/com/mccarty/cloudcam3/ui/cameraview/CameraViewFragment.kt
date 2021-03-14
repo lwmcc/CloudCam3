@@ -40,13 +40,16 @@ import java.util.*
 import java.util.concurrent.Executors
 import androidx.lifecycle.Observer
 import androidx.room.Room
+import com.mccarty.cloudcam3.MainApplication
 import com.mccarty.cloudcam3.db.AppDatabase
 import com.mccarty.cloudcam3.db.ImageEntity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 typealias LumaListener = (luma: Double) -> Unit
 
+@AndroidEntryPoint
 class CameraViewFragment: Fragment() {
 
     private val TAG = CameraViewFragment::class.simpleName
@@ -317,17 +320,9 @@ class CameraViewFragment: Fragment() {
 
     fun insertImageData(image: Uri) {
 
-        val entity = ImageEntity(userName = "larry", fileName = image.toString(), localFilePath = "fake",
-        fileExtension = "myext", latitude = 52262255, longitude = 855588445, time = 255255225, privateImage = false)
+        val entity = ImageEntity(userName = "MR L Wayne McCarty", fileName = image.toString(), localFilePath = "fake",
+        fileExtension = "myext", latitude = 52262255, longitude = 855588445, time = System.currentTimeMillis(), privateImage = false)
 
-        // TODO: move this
-        GlobalScope.launch {
-            try {
-                val db = Room.databaseBuilder(requireContext(), AppDatabase::class.java, "CloudCam3db").build()
-                db.imageDao().insertImageEntity(entity)
-            } catch(ex: Exception) {
-                Log.e(TAG, "MY ERROR $ex")
-            }
-        }
+        cameraModel.saveImageLocationToDb(entity)
     }
 }

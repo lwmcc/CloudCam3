@@ -5,8 +5,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "video")
-data class VideoEntity(
-    @ColumnInfo(name = "user_name")val userName: String?,
+class VideoEntity(
+    //@ColumnInfo(name = "user_name")val userName: String?,
+        userName: String?,
     @ColumnInfo(name = "file_name")val fileName: String?,
     @ColumnInfo(name = "local_file_path")val localFilePath: String?,
     @ColumnInfo(name = "file_extension")val fileExtension: String?,
@@ -14,4 +15,4 @@ data class VideoEntity(
     @ColumnInfo(name = "longitude")val longitude: Long = 0L,
     @ColumnInfo(name = "time")val time: Long = 0L,
     @ColumnInfo(name = "private_image")val privateVideo: Boolean = true,
-    @PrimaryKey(autoGenerate = true) val uid: Int = 0)
+    @PrimaryKey(autoGenerate = true) val uid: Int = 0): MediaEntity(userName)

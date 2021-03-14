@@ -5,8 +5,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "image")
-data class ImageEntity (
-    @ColumnInfo(name = "user_name")var userName: String?,
+class ImageEntity(
+    //@ColumnInfo(name = "user_name")var userName: String?,
+        userName: String?,
     @ColumnInfo(name = "file_name")var fileName: String?,
     @ColumnInfo(name = "local_file_path")var localFilePath: String?,
     @ColumnInfo(name = "file_extension")var fileExtension: String = "",
@@ -14,4 +15,8 @@ data class ImageEntity (
     @ColumnInfo(name = "longitude")var longitude: Long = 0L,
     @ColumnInfo(name = "time")var time: Long = 0L,
     @ColumnInfo(name = "private_image")var privateImage: Boolean = true,
-    @PrimaryKey(autoGenerate = true) var uid: Int = 0)
+    @PrimaryKey(autoGenerate = true) var uid: Int = 0): MediaEntity(userName) {
+
+
+
+}

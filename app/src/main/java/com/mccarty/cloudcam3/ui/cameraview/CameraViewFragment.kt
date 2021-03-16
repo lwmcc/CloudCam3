@@ -177,6 +177,12 @@ class CameraViewFragment: Fragment() {
 
             override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                 val savedUri = Uri.fromFile(photoFile)
+
+                Log.d(TAG,"URI ${savedUri} *****")
+                Log.d(TAG,"URI ${savedUri.path} *****")
+                Log.d(TAG,"URI ${photoFile.absolutePath} *****")
+                Log.d(TAG,"URI ${photoFile.canonicalPath} *****")
+
                 val msg = "Photo capture succeeded: $savedUri"
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.d(TAG, msg)
@@ -318,9 +324,9 @@ class CameraViewFragment: Fragment() {
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
     }
 
-    fun insertImageData(image: Uri) {
+    fun insertImageData(uri: Uri) {
 
-        val entity = ImageEntity(userName = "MR L Wayne McCarty", fileName = image.toString(), localFilePath = "fake",
+        val entity = ImageEntity(userName = "MR L Wayne McCarty", fileName = uri.path, localFilePath = uri.path,
         fileExtension = "myext", latitude = 52262255, longitude = 855588445, time = System.currentTimeMillis(), privateImage = false)
 
         cameraModel.saveImageLocationToDb(entity)

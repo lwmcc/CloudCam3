@@ -13,12 +13,20 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel @ViewModelInject constructor(private val appDatabase: AppDatabase): ViewModel() {
 
-    val getAllMediaList = MutableLiveData<MutableList<ImageEntity>>()
+    val getAllMediaList = MutableLiveData<Array<ImageEntity>>()
 
     fun getAllMedia() {
         viewModelScope.launch(Dispatchers.IO) {
             val mediaList = appDatabase.imageDao().getAll()
             getAllMediaList.postValue(mediaList)
         }
+    }
+
+    fun goToImageView() {
+        println("GO TO IMAGE VIEW *****")
+    }
+
+    fun deleteImage() {
+        println("DELETE IMAGE *****")
     }
 }

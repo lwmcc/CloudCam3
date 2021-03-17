@@ -11,7 +11,7 @@ class DeleteConfirmDialog(private val homeViewModel: HomeViewModel): DialogFragm
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
             AlertDialog.Builder(requireContext())
                     .setMessage(getString(R.string.message_confirm_delete))
-                    .setPositiveButton(getString(R.string.dialog_positive)) { _,_ -> {}
+                    .setPositiveButton(getString(R.string.dialog_positive)) { _,_ ->
                         homeViewModel.setDeleteImage()
                         homeViewModel.notifyAdapterChanged(true)
                     }

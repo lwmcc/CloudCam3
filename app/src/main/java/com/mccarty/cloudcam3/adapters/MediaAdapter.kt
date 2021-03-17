@@ -32,7 +32,7 @@ class MediaAdapter(private val homeViewModel: HomeViewModel,
         val uri = Uri.fromFile(File(mediaArray[position].localFilePath!!))
 
         viewHolder.imageIcon.setOnClickListener {
-            homeViewModel.goToImageView()
+            homeViewModel.navigateToImageView(mediaArray[position])
         }
 
         viewHolder.imageIcon.setOnLongClickListener {

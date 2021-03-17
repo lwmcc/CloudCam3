@@ -43,6 +43,7 @@ import androidx.room.Room
 import com.mccarty.cloudcam3.MainApplication
 import com.mccarty.cloudcam3.db.AppDatabase
 import com.mccarty.cloudcam3.db.ImageEntity
+import com.mccarty.cloudcam3.ui.CameraFragments
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -50,7 +51,7 @@ import kotlinx.coroutines.launch
 typealias LumaListener = (luma: Double) -> Unit
 
 @AndroidEntryPoint
-class CameraViewFragment: Fragment() {
+class CameraViewFragment: Fragment(), CameraFragments {
 
     private val TAG = CameraViewFragment::class.simpleName
     private val model: MainActivityViewModel by activityViewModels()
@@ -73,7 +74,7 @@ class CameraViewFragment: Fragment() {
         cameraModel.cameraMode(CameraModes.PHOTO.mode)
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-            model.showButton(true)
+            showHideFabButton(true)
             requireActivity().supportFragmentManager.popBackStack()
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback);
@@ -106,8 +107,7 @@ class CameraViewFragment: Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        model.showButton(false)
-
+        showHideFabButton(false)
     }
 
     override fun onResume() {
@@ -178,14 +178,8 @@ class CameraViewFragment: Fragment() {
             override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                 val savedUri = Uri.fromFile(photoFile)
 
-                Log.d(TAG,"URI ${savedUri} *****")
-                Log.d(TAG,"URI ${savedUri.path} *****")
-                Log.d(TAG,"URI ${photoFile.absolutePath} *****")
-                Log.d(TAG,"URI ${photoFile.canonicalPath} *****")
-
                 val msg = "Photo capture succeeded: $savedUri"
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                Log.d(TAG, msg)
 
                 //cameraModel.saveImageLocationToDb()
                 insertImageData(savedUri)
@@ -330,5 +324,9 @@ class CameraViewFragment: Fragment() {
         fileExtension = "myext", latitude = 52262255, longitude = 855588445, time = System.currentTimeMillis(), privateImage = false)
 
         cameraModel.saveImageLocationToDb(entity)
+    }
+
+    override fun showHideFabButton(showButton: Boolean) {
+        model.showButton(showButton)
     }
 }

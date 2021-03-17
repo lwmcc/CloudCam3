@@ -38,12 +38,16 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
         setupActionBarWithNavController(navController)
         fab = findViewById(R.id.fab)
-        fab.setOnClickListener { _ ->
+        fab.setOnClickListener {
             navigateToCamera()
         }
 
-        model.showCameraButton.observe(this, Observer<Boolean> {
+        model.showCameraButton.observe(this, Observer {
             showHideFabButton(it)
+        })
+
+        model.goToImageView.observe(this, Observer {
+            navController.navigate(R.id.imageViewFragment)
         })
     }
 
@@ -72,21 +76,17 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_REQUEST_CODE_PERMISSION) {
             if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                navigateToCamera(R.id.cameraViewFragment)
+                navController.navigate(R.id.cameraViewFragment)
             }
         }
     }
 
     private fun navigateToCamera() {
         when(hasCameraPermission()) {
-            true -> navigateToCamera(R.id.cameraViewFragment)
+            true -> navController.navigate(R.id.cameraViewFragment)
             false -> requestCameraPermission()
         }
      }
-
-    private fun navigateToCamera(id: Int) {
-        navController.navigate(id)
-    }
 
     private fun hasCameraPermission() = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 

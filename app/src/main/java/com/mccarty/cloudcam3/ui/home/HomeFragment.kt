@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.mccarty.cloudcam3.MainActivityViewModel
 import com.mccarty.cloudcam3.R
 import com.mccarty.cloudcam3.adapters.MediaAdapter
 import com.mccarty.cloudcam3.db.ImageEntity
@@ -18,8 +21,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
-    private lateinit var adapter: MediaAdapter
     private val homeViewModel: HomeViewModel by viewModels()
+    private val mainModel: MainActivityViewModel by activityViewModels()
+
+    private lateinit var adapter: MediaAdapter
     private lateinit var entityList: MutableList<ImageEntity>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,10 +49,6 @@ class HomeFragment : Fragment() {
                 homeViewModel.getAllMedia()
             }
         })
-
-        homeViewModel.goToImageView.observe(requireActivity(), Observer {
-
-        })
     }
 
     override fun onCreateView(
@@ -59,7 +60,7 @@ class HomeFragment : Fragment() {
         val recyclerView: RecyclerView = root.findViewById(R.id.media_recycler)
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 5)
 
-        adapter = MediaAdapter(homeViewModel, entityList)
+        adapter = MediaAdapter(mainModel, homeViewModel, entityList)
         recyclerView.adapter = adapter
 
         return root

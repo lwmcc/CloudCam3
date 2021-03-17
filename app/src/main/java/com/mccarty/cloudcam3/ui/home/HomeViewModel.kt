@@ -13,18 +13,14 @@ class HomeViewModel @ViewModelInject constructor(private val appDatabase: AppDat
 
     val getAllMediaList = MutableLiveData<Array<ImageEntity>>()
     val showDeleteImageDialog = MutableLiveData<ImageEntity>()
-    val adapterChanged = MutableLiveData<Boolean>()
     val goToImageView = MutableLiveData<ImageEntity>()
+    val adapterChanged = MutableLiveData<Boolean>()
 
     fun getAllMedia() {
         viewModelScope.launch(Dispatchers.IO) {
             val mediaList = appDatabase.imageDao().getAll()
             getAllMediaList.postValue(mediaList)
         }
-    }
-
-    fun navigateToImageView(entity: ImageEntity) {
-        goToImageView.value = entity
     }
 
     fun setConfirmDeleteImageDialogTrue(entity: ImageEntity) {
@@ -39,5 +35,10 @@ class HomeViewModel @ViewModelInject constructor(private val appDatabase: AppDat
 
     fun notifyAdapterChanged(changed: Boolean) {
         adapterChanged.value = changed
+    }
+
+    fun navigateToImageView(entity: ImageEntity) {
+        println("GO TO IMAGE IN VM *****")
+        goToImageView.value = entity
     }
 }

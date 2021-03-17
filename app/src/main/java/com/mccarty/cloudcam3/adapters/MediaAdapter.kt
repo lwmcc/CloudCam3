@@ -8,13 +8,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.mccarty.cloudcam3.MainActivityViewModel
 import com.mccarty.cloudcam3.R
 import com.mccarty.cloudcam3.db.ImageEntity
 import com.mccarty.cloudcam3.ui.home.HomeViewModel
 import java.io.File
 
 
-class MediaAdapter(private val homeViewModel: HomeViewModel,
+class MediaAdapter(private val mainModel: MainActivityViewModel, private val homeViewModel: HomeViewModel,
                    private val mediaArray: List<ImageEntity>):
     RecyclerView.Adapter<MediaAdapter.ViewHolder>() {
 
@@ -32,7 +33,7 @@ class MediaAdapter(private val homeViewModel: HomeViewModel,
         val uri = Uri.fromFile(File(mediaArray[position].localFilePath!!))
 
         viewHolder.imageIcon.setOnClickListener {
-            homeViewModel.navigateToImageView(mediaArray[position])
+            mainModel.navigateToImageView(mediaArray[position])
         }
 
         viewHolder.imageIcon.setOnLongClickListener {

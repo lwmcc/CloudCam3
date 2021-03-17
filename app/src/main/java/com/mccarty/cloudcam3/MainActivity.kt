@@ -19,17 +19,13 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.room.Room
-import com.mccarty.cloudcam3.db.AppDatabase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val TAG = MainActivity::class.java.canonicalName
     private lateinit var fab: FloatingActionButton
     private lateinit var navController: NavController
-    private lateinit var db: AppDatabase
     private val model: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +91,7 @@ class MainActivity : AppCompatActivity() {
     private fun hasCameraPermission() = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 
     private fun requestCameraPermission() {
-            ActivityCompat.requestPermissions(this, arrayOf(CAMERA_PERMISSION), CAMERA_REQUEST_CODE_PERMISSION);
+            ActivityCompat.requestPermissions(this, arrayOf(CAMERA_PERMISSION), CAMERA_REQUEST_CODE_PERMISSION)
     }
 
     companion object {

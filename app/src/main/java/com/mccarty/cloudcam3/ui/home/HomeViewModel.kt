@@ -1,5 +1,6 @@
 package com.mccarty.cloudcam3.ui.home
 
+import android.media.Image
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,6 +15,8 @@ import kotlinx.coroutines.launch
 class HomeViewModel @ViewModelInject constructor(private val appDatabase: AppDatabase): ViewModel() {
 
     val getAllMediaList = MutableLiveData<Array<ImageEntity>>()
+    val showDeleteImageDialog = MutableLiveData<ImageEntity>()
+    val adapterChanged = MutableLiveData<Boolean>()
 
     fun getAllMedia() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -26,7 +29,17 @@ class HomeViewModel @ViewModelInject constructor(private val appDatabase: AppDat
         println("GO TO IMAGE VIEW *****")
     }
 
-    fun deleteImage() {
-        println("DELETE IMAGE *****")
+    fun setConfirmDeleteImageDialogTrue(entity: ImageEntity) {
+        showDeleteImageDialog.value = entity
+    }
+
+    fun setDeleteImage() {
+        viewModelScope.launch(Dispatchers.IO) {
+            appDatabase.imageDao().deleteImage(showDeleteImageDialog.value!!)
+        }
+    }
+
+    fun notifyAdapterChanged(changed: Boolean) {
+        adapterChanged.value = changed
     }
 }

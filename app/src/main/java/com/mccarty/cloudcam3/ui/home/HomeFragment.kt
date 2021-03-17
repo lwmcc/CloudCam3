@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mccarty.cloudcam3.R
 import com.mccarty.cloudcam3.adapters.MediaAdapter
 import com.mccarty.cloudcam3.db.ImageEntity
+import com.mccarty.cloudcam3.dialogs.DeleteConfirmDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_camera_view.*
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -39,11 +41,20 @@ class HomeFragment : Fragment() {
         entityList = mutableListOf()
 
         homeViewModel.getAllMediaList.observe(requireActivity(), Observer { images ->
-
             if(images.isNotEmpty()) {
                 entityList.clear()
                 entityList.addAll(images)
-                adapter.notifyDataSetChanged()
+                notifyDataChange() // TODO: is this needed?
+            }
+        })
+
+        homeViewModel.showDeleteImageDialog.observe(requireActivity(), Observer {
+            DeleteConfirmDialog(homeViewModel).show(parentFragmentManager, "DELETE_IMAGE_CONFIRMATION")
+        })
+
+        homeViewModel.adapterChanged.observe(requireActivity(), Observer {
+            if(it) {
+                homeViewModel.getAllMedia()
             }
         })
     }
@@ -66,6 +77,10 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         homeViewModel.getAllMedia()
+    }
+
+    private fun notifyDataChange() {
+        adapter.notifyDataSetChanged()
     }
 
 }

@@ -10,4 +10,9 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+
+    <!-- MAIN -->
+    <string name="message_confirm_delete">Do you want to delete this image?</string>
+    <string name="dialog_positive">Yes</string>
+    <string name="dialog_negative">No</string>
 </resources>

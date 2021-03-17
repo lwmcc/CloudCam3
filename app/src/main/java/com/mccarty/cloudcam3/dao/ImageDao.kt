@@ -1,6 +1,7 @@
 package com.mccarty.cloudcam3.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.mccarty.cloudcam3.db.ImageEntity
@@ -16,4 +17,7 @@ interface ImageDao {
 
     @Insert
     fun insertImageEntity(image: ImageEntity)
+
+    @Delete
+    fun deleteImage(image: ImageEntity)
 }

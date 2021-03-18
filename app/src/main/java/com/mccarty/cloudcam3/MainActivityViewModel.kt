@@ -1,21 +1,31 @@
 package com.mccarty.cloudcam3
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
+import android.net.Uri
+import androidx.lifecycle.*
 import com.mccarty.cloudcam3.db.ImageEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
 
 class MainActivityViewModel: ViewModel() {
     val showCameraButton = MutableLiveData<Boolean>()
-    val goToImageView = MutableLiveData<ImageEntity>()
+    val goToImageView = MutableLiveData<ImageEntity>() // TODO: change this name
+    val imageFile = MutableLiveData<Uri>()
 
     fun showButton(show: Boolean) {
         showCameraButton.value = show
     }
 
     fun navigateToImageView(entity: ImageEntity) {
-        println("GO TO IMAGE IN VM *****")
         goToImageView.value = entity
+    }
+
+    fun getImageForView() {
+        viewModelScope.launch(Dispatchers.IO) {
+            goToImageView.value?.localFilePath?.let {
+                val uri = Uri.fromFile(File(it))
+                imageFile.postValue(uri)
+            }
+        }
     }
 }

@@ -91,7 +91,7 @@ class CameraViewFragment: Fragment(), CameraFragments {
         finder = viewFinder
         outputDirectory = requireActivity().filesDir
 
-        setupUI()
+        uiSetup()
         startCamera()
 
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -113,38 +113,6 @@ class CameraViewFragment: Fragment(), CameraFragments {
     override fun onResume() {
         super.onResume()
 
-    }
-
-    private fun setupUI() {
-        camera_capture_button.setOnClickListener {
-            takePhoto()
-        }
-
-        video_capture_button.setOnClickListener {
-            takeVideo()
-        }
-
-        capture_mode_button.setOnClickListener {
-            when(cameraModel.showCameraButton.value) {
-                CameraModes.PHOTO.mode -> {
-                    cameraModel.cameraMode(CameraModes.VIDEO.mode)
-                    cameraModel.showPicButton(false)
-                }
-                CameraModes.VIDEO.mode -> {
-                    cameraModel.cameraMode(CameraModes.PHOTO.mode)
-                    cameraModel.showPicButton(true)
-                }
-            }
-        }
-
-        switch_cameras_button.setOnClickListener {
-            lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
-                CameraSelector.LENS_FACING_BACK
-            } else {
-                CameraSelector.LENS_FACING_FRONT
-            }
-            bindCameraUseCases()
-        }
     }
 
     private fun startCamera() {
@@ -328,5 +296,37 @@ class CameraViewFragment: Fragment(), CameraFragments {
 
     override fun showHideFabButton(showButton: Boolean) {
         model.showButton(showButton)
+    }
+
+    override fun uiSetup() {
+        camera_capture_button.setOnClickListener {
+            takePhoto()
+        }
+
+        video_capture_button.setOnClickListener {
+            takeVideo()
+        }
+
+        capture_mode_button.setOnClickListener {
+            when(cameraModel.showCameraButton.value) {
+                CameraModes.PHOTO.mode -> {
+                    cameraModel.cameraMode(CameraModes.VIDEO.mode)
+                    cameraModel.showPicButton(false)
+                }
+                CameraModes.VIDEO.mode -> {
+                    cameraModel.cameraMode(CameraModes.PHOTO.mode)
+                    cameraModel.showPicButton(true)
+                }
+            }
+        }
+
+        switch_cameras_button.setOnClickListener {
+            lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
+                CameraSelector.LENS_FACING_BACK
+            } else {
+                CameraSelector.LENS_FACING_FRONT
+            }
+            bindCameraUseCases()
+        }
     }
 }

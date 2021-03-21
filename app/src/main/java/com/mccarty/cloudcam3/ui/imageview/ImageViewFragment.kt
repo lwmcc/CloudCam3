@@ -27,28 +27,6 @@ class ImageViewFragment: Fragment(), CameraFragments {
             requireActivity().supportFragmentManager.popBackStack()
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback);
-
-        println("IMAGE HERE *****")
-
-        if(main_image_view != null) {
-            println("IMAGE HERE NOT NULL *****")
-        } else {
-            println("IMAGE HERE IS NULL *****")
-        }
-
-        mainModel.imageFile.observe(requireActivity(), Observer {
-
-            if(it != null) {
-                //main_image_view.invalidate()
-                println("URI NOT NULL ${it.toString()} *****")
-            } else {
-                println("URI IS NULL *****")
-            }
-
-            it?.let {
-                //main_image_view.setImageURI(it)
-            }
-        })
     }
 
     override fun onCreateView(
@@ -59,18 +37,14 @@ class ImageViewFragment: Fragment(), CameraFragments {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        main_image_view.setImageURI(Uri.fromFile(File(mainModel.navigateToImage.value?.localFilePath)))
         showHideFabButton(false)
     }
 
     override fun onStart() {
         super.onStart()
-        println("ON  START *****")
         uiSetup()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        println("ON RESUME *****")
     }
 
     override fun showHideFabButton(showButton: Boolean) {

@@ -46,9 +46,13 @@ class MainActivity : AppCompatActivity() {
             showHideFabButton(it)
         })
 
-        model.goToImageView.observe(this, Observer {
+        model.navigateToImage.observe(this, Observer {
             navController.navigate(R.id.imageViewFragment)
         })
+
+/*        model.goToImageView.observe(this, Observer {
+            navController.navigate(R.id.imageViewFragment)
+        })*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

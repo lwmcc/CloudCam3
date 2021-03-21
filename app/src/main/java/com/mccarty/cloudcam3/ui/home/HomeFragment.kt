@@ -60,6 +60,7 @@ class HomeFragment : Fragment() {
         val recyclerView: RecyclerView = root.findViewById(R.id.media_recycler)
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 5)
 
+        // TODO: fix initialization error on rotation
         adapter = MediaAdapter(mainModel, homeViewModel, entityList)
         recyclerView.adapter = adapter
 

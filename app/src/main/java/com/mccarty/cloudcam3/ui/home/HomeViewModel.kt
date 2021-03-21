@@ -36,9 +36,4 @@ class HomeViewModel @ViewModelInject constructor(private val appDatabase: AppDat
     fun notifyAdapterChanged(changed: Boolean) {
         adapterChanged.value = changed
     }
-
-    fun navigateToImageView(entity: ImageEntity) {
-        println("GO TO IMAGE IN VM *****")
-        goToImageView.value = entity
-    }
 }

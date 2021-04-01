@@ -10,7 +10,7 @@ import com.mccarty.cloudcam3.db.MediaEntity
 @Dao
 interface ImageDao {
     @Query("SELECT * FROM image")
-    fun getAll(): Array<ImageEntity>
+    suspend fun getAll(): Array<ImageEntity>
 
     @Insert
     fun insertAll(vararg images: ImageEntity)

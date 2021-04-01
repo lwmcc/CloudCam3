@@ -1,6 +1,7 @@
 package com.mccarty.cloudcam3.ui.cameraview
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,17 +12,20 @@ import kotlinx.coroutines.launch
 
 class CameraViewViewModel @ViewModelInject constructor(private val appDatabase: AppDatabase): ViewModel() {
 
-    val showCameraButton = MutableLiveData<String>()
-    val showPictureCaptureButton = MutableLiveData<Boolean>()
+    private val _showCameraButton = MutableLiveData<String>("")
+    val showCameraButton: LiveData<String> = _showCameraButton
+
+    private val _showPictureCaptureButton = MutableLiveData<Boolean>(false)
+    val showPictureCaptureButton: LiveData<Boolean> = _showPictureCaptureButton
 
     fun cameraMode(mode: String) {
-        showCameraButton.value = mode
+        _showCameraButton.value = mode
     }
 
     fun showPicButton(show: Boolean) {
         when(show) {
-            true -> showPictureCaptureButton.value = true
-            false -> showPictureCaptureButton.value = false
+            true -> _showPictureCaptureButton.value = true
+            false -> _showPictureCaptureButton.value = false
         }
     }
 

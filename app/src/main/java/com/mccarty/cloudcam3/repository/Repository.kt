@@ -12,4 +12,8 @@ class Repository @Inject constructor(private val appDatabase: AppDatabase) {
     suspend fun deleteImage(entity: ImageEntity) {
         appDatabase.imageDao().deleteImage(entity)
     }
+
+    suspend fun insertEntity(entity: ImageEntity) {
+        appDatabase.imageDao().insertImageEntity(entity)
+    }
 }

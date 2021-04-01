@@ -16,7 +16,7 @@ interface ImageDao {
     fun insertAll(vararg images: ImageEntity)
 
     @Insert
-    fun insertImageEntity(image: ImageEntity)
+    suspend fun insertImageEntity(image: ImageEntity)
 
     @Delete
     suspend fun deleteImage(image: ImageEntity)

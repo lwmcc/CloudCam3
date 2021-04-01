@@ -7,10 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mccarty.cloudcam3.db.AppDatabase
 import com.mccarty.cloudcam3.db.ImageEntity
+import com.mccarty.cloudcam3.repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CameraViewViewModel @ViewModelInject constructor(private val appDatabase: AppDatabase): ViewModel() {
+class CameraViewViewModel @ViewModelInject constructor(private val repo: Repository): ViewModel() {
 
     private val _showCameraButton = MutableLiveData<String>("")
     val showCameraButton: LiveData<String> = _showCameraButton
@@ -31,7 +32,7 @@ class CameraViewViewModel @ViewModelInject constructor(private val appDatabase: 
 
     fun saveImageLocationToDb(entity: ImageEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            appDatabase.imageDao().insertImageEntity(entity)
+            repo.insertEntity(entity)
         }
     }
 }

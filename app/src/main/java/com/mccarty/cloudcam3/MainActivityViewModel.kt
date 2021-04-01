@@ -10,7 +10,7 @@ import org.w3c.dom.Entity
 import java.io.File
 
 class MainActivityViewModel: ViewModel() {
-    private val _showCameraButton = MutableLiveData<Boolean>(false)
+    private val _showCameraButton = MutableLiveData<Boolean>(true)
     val showCameraButton: LiveData<Boolean> = _showCameraButton
 
     private val _goToImageView = MutableLiveData<ImageEntity>() // TODO: change this name

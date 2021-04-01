@@ -5,12 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mccarty.cloudcam3.db.AppDatabase
 import com.mccarty.cloudcam3.db.ImageEntity
+import com.mccarty.cloudcam3.repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class HomeViewModel @ViewModelInject constructor(private val appDatabase: AppDatabase): ViewModel() {
+class HomeViewModel @ViewModelInject constructor(private val repo: Repository): ViewModel() {
 
     private val _getAllMediaList = MutableLiveData<Array<ImageEntity>>()
     val getAllMediaList: LiveData<Array<ImageEntity>> = _getAllMediaList
@@ -26,8 +26,7 @@ class HomeViewModel @ViewModelInject constructor(private val appDatabase: AppDat
 
     fun getAllMedia() {
         viewModelScope.launch(Dispatchers.IO) {
-            val mediaList = appDatabase.imageDao().getAll()
-            _getAllMediaList.postValue(mediaList)
+            _getAllMediaList.postValue(repo.getAllImages())
         }
     }
 
@@ -37,7 +36,7 @@ class HomeViewModel @ViewModelInject constructor(private val appDatabase: AppDat
 
     fun setDeleteImage() {
         viewModelScope.launch(Dispatchers.IO) {
-            appDatabase.imageDao().deleteImage(showDeleteImageDialog.value!!)
+            repo.deleteImage(showDeleteImageDialog.value!!)
         }
     }
 

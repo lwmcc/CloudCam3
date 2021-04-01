@@ -19,5 +19,5 @@ interface ImageDao {
     fun insertImageEntity(image: ImageEntity)
 
     @Delete
-    fun deleteImage(image: ImageEntity)
+    suspend fun deleteImage(image: ImageEntity)
 }
